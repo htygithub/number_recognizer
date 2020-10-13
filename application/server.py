@@ -3,7 +3,7 @@ import tornado.web
 from machines.machine_loader import MachineLoader
 import machines.number_recognizer
 from machines.number_recognizer.validator import Validator
-
+import numpy as np
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
@@ -23,7 +23,7 @@ class PredictionHandler(BaseHandler):
         validated = Validator.validate_data(data)
         machine = MachineLoader.load(machines.number_recognizer)
         if len(validated) > 0:
-            predicted = machine.predict(validated)
+            predicted = machine.predict(np.array(validated).reshape(1, -1))
             resp["result"] = str(predicted[0])
 
         self.write(resp)
